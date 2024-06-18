@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <title>Emergency Contacts</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('https://img.freepik.com/free-vector/national-doctor-s-day-hand-drawn-background_23-2149438164.jpg?w=1060&t=st=1701775511~exp=1701776111~hmac=c9766c4fd4d05061336b64c2e644a01a557070ad6299ff9e523ec43ab9a905af');
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .container {
+            
+            max-width: 850px;
+            margin: 20px;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            max-height: 100vh;
+        }
+
+        header {
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            border-radius: 5px 5px 0 0;
+        }
+
+        .content {
+            display: flex;
+            justify-content: space-between;
+            height: 100%;
+        }
+
+        .emergency-text {
+            max-width: 300px;
+            padding: 10px;
+            background-color: #fc5a5a;
+            color: white;
+            border-radius: 5px;
+            margin-right: 20px;
+        }
+
+        table {
+            flex-grow: 1;
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #333;
+            color: white;
+            cursor: pointer;
+        }
+
+        .search-bar {
+            padding-top: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            width: 200px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #555;
+        }
+
+        .highlight {
+            background-color: yellow;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Emergency Contacts</h1>
+        </header>
+
+        <div class="content">
+            <div class="emergency-text">
+                <h2>Emergency Information</h2>
+                <p> This Emergency Contact Number System help to provide accessible emergency contact numbers near to your place  </p>
+                <p> You can search agencies or adress and then get their contact number with their corresponding network carrier   </p>
+                
+            </div>
+
+            <div>
+                <div class="search-bar">
+                    <input type="text" id="searchInput" oninput="applySearch()" placeholder="Search by name or address">
+                    
+                </div>
+                
+
+                <table class="table table-striped mt-3">
+                    <thead>
+                        <tr>
+                            <th onclick="sortTable(0)">Agency</th>
+                            <th onclick="sortTable(1)">Address</th>
+                            <th onclick="sortTable(2)">Network Carrier</th>
+                            <th onclick="sortTable(3)">Contact Number</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        {% for contact in contacts %}
+                        <tr>
+                            <td>{{ contact[1] }}</td>
+                            <td>{{ contact[2] }}</td>
+                            <td>{{ contact[3] }}</td>
+                            <td>{{ contact[4] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <button onclick="showPrevious()">Previous</button>
+                    <button onclick="showNext()">Next</button>
+            </div>
+        </div>
+        
+    </div>
+    
+    <script>
+        var currentPage = 1;
+        var entriesPerPage = 10;
+        var totalEntries = document.querySelectorAll("#tableBody tr").length;
+
+        // Function to sort the table based on column index
+        function sortTable(columnIndex) {
+            var table = document.querySelector("table");
+            var rows = Array.from(table.rows).slice(1); // Skip header row
+
+            rows.sort((a, b) => {
+                var x = a.cells[columnIndex].textContent.trim();
+                var y = b.cells[columnIndex].textContent.trim();
+
+                if (columnIndex === 1) {
+                    return x.localeCompare(y);
+                } else {
+                    return x.toLowerCase().localeCompare(y.toLowerCase());
+                }
+            });
+
+            rows.forEach(row => table.tBodies[0].appendChild(row));
+        }
+
+        // Function to apply search
+        function applySearch() {
+            var input = document.getElementById("searchInput");
+            var filter = input.value.toUpperCase();
+            var table = document.querySelector("table");
+            var rows = Array.from(table.rows).slice(1); // Skip header row
+
+            rows.forEach(row => {
+                row.style.display = "none";
+
+                var cells = Array.from(row.cells);
+                cells.forEach(cell => {
+                    var txtValue = cell.textContent.trim();
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        row.style.display = "";
+                        cell.innerHTML = txtValue.replace(new RegExp(filter, 'gi'), match => `<span class="highlight">${match}</span>`);
+                    }
+                });
+            });
+        }
+
+        // Function to show the previous page
+        function showPrevious() {
+            if (currentPage > 1) {
+                currentPage--;
+                showEntries();
+            }
+        }
+
+        // Function to show the next page
+        function showNext() {
+            var totalPages = Math.ceil(totalEntries / entriesPerPage);
+            if (currentPage < totalPages) {
+                currentPage++;
+                showEntries();
+            }
+        }
+
+        // Function to show the current entries based on pagination
+        function showEntries() {
+            var rows = document.querySelectorAll("#tableBody tr");
+            var start = (currentPage - 1) * entriesPerPage;
+            var end = start + entriesPerPage;
+
+            rows.forEach((row, index) => {
+                row.style.display = index >= start && index < end ? "" : "none";
+            });
+        }
+
+        // Initial display
+        showEntries();
+    </script>
+
+</body>
+</html>

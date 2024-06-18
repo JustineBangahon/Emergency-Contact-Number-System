@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Confirm Delete</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f5f5f5;
+        }
+
+        h2 {
+            color: #333;
+        }
+
+        .confirmation-box {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin: 0 auto;
+            max-width: 400px;
+        }
+
+        .confirmation-text {
+            text-align: left;
+            margin: 20px 0;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 4px;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+            color: #fff;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: #fff;
+        }
+
+        .btn-secondary:hover,
+        .btn-danger:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="confirmation-box">
+        <h2>Confirm Deletion</h2>
+        <p>Are you sure you want to delete the following contact?</p>
+        <div class="confirmation-text">
+            <p>Name: {{ contact[1] }}</p>
+            <p>Address: {{ contact[2] }}</p>
+            <p>Network Carrier: {{ contact[3] }}</p>
+            <p>Contact Number: {{ contact[4] }}</p>
+        </div>
+        <form action="{{ url_for('delete_contact_confirm', ec_id=ec_id) }}" method="POST">
+            <button type="submit" class="btn btn-danger">Confirm Delete</button>
+            <a href="{{ url_for('home') }}" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</body>
+</html>
